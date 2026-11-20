@@ -1,0 +1,6 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+  {% if status_url %}<li><a href="{{ status_url }}">Изменить статус</a></li>{% endif %}
+  {{ block.super }}
+{% endblock %}

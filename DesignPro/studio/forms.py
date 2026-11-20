@@ -58,3 +58,22 @@ class DesignRequestForm(forms.ModelForm):
         if formats.get(Path(photo.name).suffix.lower()) != photo.image.format:
             raise forms.ValidationError("Загрузите изображение в формате JPG, JPEG, PNG или BMP.")
         return photo
+
+
+class RequestStatusForm(forms.Form):
+    status = forms.ChoiceField(label="Новый статус", choices=[
+        ("", "Выберите статус"),
+        (DesignRequest.Status.ACCEPTED, DesignRequest.Status.ACCEPTED.label),
+        (DesignRequest.Status.COMPLETED, DesignRequest.Status.COMPLETED.label),
+    ])
+    comment = forms.CharField(label="Комментарий", required=False, widget=forms.Textarea(attrs={"rows": 4}))
+    design = forms.ImageField(label="Готовый дизайн", required=False)
+
+    def clean(self):
+        data = super().clean()
+        status = data.get("status")
+        if status == DesignRequest.Status.ACCEPTED and not data.get("comment"):
+            self.add_error("comment", "Напишите комментарий для принятия заявки в работу.")
+        if status == DesignRequest.Status.COMPLETED and "design" in data and not data["design"]:
+            self.add_error("design", "Прикрепите изображение готового дизайна.")
+        return data

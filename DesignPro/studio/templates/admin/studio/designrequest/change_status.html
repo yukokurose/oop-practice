@@ -1,0 +1,37 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <h2>{{ item.title }}</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <fieldset class="module aligned">
+      <div class="form-row">
+        {{ form.status.errors }}
+        {{ form.status.label_tag }} {{ form.status }}
+      </div>
+      <div class="form-row">
+        {{ form.comment.errors }}
+        {{ form.comment.label_tag }} {{ form.comment }}
+        <div class="help">Обязателен для статуса «Принято в работу».</div>
+      </div>
+      <div class="form-row">
+        {{ form.design.errors }}
+        {{ form.design.label_tag }} {{ form.design }}
+        <div class="help">Обязательно для статуса «Выполнено».</div>
+      </div>
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="Сохранить статус" class="default">
+      <a href="{{ detail_url }}">Отмена</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

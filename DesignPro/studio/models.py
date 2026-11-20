@@ -44,6 +44,7 @@ class DesignRequest(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория")
     photo = models.ImageField("Фото помещения или план", upload_to="requests/")
     design = models.ImageField("Готовый дизайн", upload_to="designs/", blank=True)
+    comment = models.TextField("Комментарий администратора", blank=True)
     status = models.CharField("Статус", max_length=12, choices=Status.choices, default=Status.NEW)
     created_at = models.DateTimeField("Дата добавления", auto_now_add=True)
 
