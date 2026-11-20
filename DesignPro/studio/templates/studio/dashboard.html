@@ -5,12 +5,35 @@
 <section class="projects">
   <h1>Личный кабинет</h1>
   <p>{{ user.full_name|default:user.username }}</p>
-  <h2>Мои заявки</h2>
+  <div class="request-toolbar">
+    <h2>Мои заявки</h2>
+    <a href="{% url 'request_create' %}" class="button">Создать заявку</a>
+  </div>
+  <form class="request-filter" method="get">
+    <label for="status">Статус</label>
+    <select name="status" id="status">
+      <option value="">Все статусы</option>
+      {% for value, label in statuses %}
+        <option value="{{ value }}"{% if status == value %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button class="button secondary" type="submit">Показать</button>
+  </form>
   <ul class="request-list">
     {% for item in requests %}
-      <li><strong>{{ item.title }}</strong> <span>{{ item.get_status_display }}</span></li>
+      <li>
+        <div class="request-heading">
+          <h3>{{ item.title }}</h3>
+          <span>{{ item.get_status_display }}</span>
+        </div>
+        <p class="request-meta">{{ item.category }} · <time datetime="{{ item.created_at|date:'c' }}">{{ item.created_at|date:"d.m.Y H:i" }}</time></p>
+        <p class="request-description">{{ item.description }}</p>
+        {% if item.status == new_status %}
+          <a class="delete-link" href="{% url 'request_delete' item.pk %}">Удалить заявку</a>
+        {% endif %}
+      </li>
     {% empty %}
-      <li class="empty">У вас пока нет заявок.</li>
+      <li class="empty">{% if status %}Заявок с этим статусом нет.{% else %}У вас пока нет заявок.{% endif %}</li>
     {% endfor %}
   </ul>
 </section>

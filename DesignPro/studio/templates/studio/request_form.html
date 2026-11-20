@@ -1,0 +1,14 @@
+{% extends "studio/base.html" %}
+
+{% block title %}Новая заявка · Design.pro{% endblock %}
+{% block content %}
+<section class="account-panel">
+  <h1>Новая заявка</h1>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include "studio/form_fields.html" %}
+    <button type="submit" class="button">Отправить заявку</button>
+    <a class="button secondary" href="{% url 'dashboard' %}">Отмена</a>
+  </form>
+</section>
+{% endblock %}

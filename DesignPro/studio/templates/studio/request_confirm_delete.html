@@ -1,0 +1,14 @@
+{% extends "studio/base.html" %}
+
+{% block title %}Удаление заявки · Design.pro{% endblock %}
+{% block content %}
+<section class="account-panel">
+  <h1>Удалить заявку?</h1>
+  <p class="confirm-description">Заявка «{{ item.title }}» будет удалена.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="button danger">Удалить</button>
+    <a class="button secondary" href="{% url 'dashboard' %}">Отмена</a>
+  </form>
+</section>
+{% endblock %}

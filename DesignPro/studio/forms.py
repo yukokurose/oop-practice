@@ -1,8 +1,10 @@
+from pathlib import Path
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils import timezone
 
-from .models import User
+from .models import DesignRequest, User
 
 
 class RegistrationForm(UserCreationForm):
@@ -36,3 +38,23 @@ class RegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class DesignRequestForm(forms.ModelForm):
+    class Meta:
+        model = DesignRequest
+        fields = ("title", "description", "category", "photo")
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 4}),
+            "photo": forms.ClearableFileInput(attrs={"accept": ".jpg,.jpeg,.png,.bmp"}),
+        }
+        help_texts = {"photo": "JPG, JPEG, PNG или BMP. Максимальный размер — 2 МБ."}
+
+    def clean_photo(self):
+        photo = self.cleaned_data["photo"]
+        if photo.size > 2 * 1024 * 1024:
+            raise forms.ValidationError("Размер файла не должен превышать 2 МБ.")
+        formats = {".jpg": "JPEG", ".jpeg": "JPEG", ".png": "PNG", ".bmp": "BMP"}
+        if formats.get(Path(photo.name).suffix.lower()) != photo.image.format:
+            raise forms.ValidationError("Загрузите изображение в формате JPG, JPEG, PNG или BMP.")
+        return photo

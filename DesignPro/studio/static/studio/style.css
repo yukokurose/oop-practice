@@ -11,7 +11,7 @@
 * { box-sizing: border-box; }
 body { margin: 0; }
 a { color: var(--accent); }
-a:focus-visible, button:focus-visible, input:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
@@ -25,6 +25,8 @@ h2 { font-size: 1.65rem; }
 .header nav { display: flex; flex-wrap: wrap; gap: .6rem 1.25rem; }
 .header a { text-decoration: none; }
 .header nav a:hover { text-decoration: underline; }
+.text-button { padding: 0; border: 0; background: transparent; color: var(--accent); font: inherit; cursor: pointer; }
+.text-button:hover { text-decoration: underline; }
 .brand { color: #202829; font-size: 1.5rem; font-weight: 750; letter-spacing: -.04em; }
 .brand span { color: var(--accent); }
 
@@ -35,6 +37,10 @@ h2 { font-size: 1.65rem; }
 .hero-count strong { font-size: 3rem; line-height: 1; }
 .button { display: inline-block; border: 0; border-radius: .5rem; padding: .65rem 1rem; color: #fff; background: var(--accent); font: inherit; font-weight: 650; text-decoration: none; cursor: pointer; }
 .button:hover { background: #10473f; }
+.secondary { color: var(--accent); background: #e0ece8; }
+.secondary:hover { background: #cde2da; }
+.danger { background: #9b2625; }
+.danger:hover { background: #7f1c1c; }
 
 .projects { margin-block: 2rem 3rem; }
 .projects > h1 { margin-bottom: .7rem; }
@@ -46,23 +52,30 @@ h2 { font-size: 1.65rem; }
 .project-content p, .project-content time { color: var(--muted); font-size: .88rem; }
 .request-list { display: grid; gap: .6rem; padding: 0; list-style: none; }
 .request-list li, .empty { padding: .9rem 1rem; border-radius: .5rem; background: #fff; }
-.request-list span { margin-left: .5rem; color: var(--muted); }
+.request-toolbar, .request-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .65rem; }
+.request-heading span, .request-meta { color: var(--muted); font-size: .9rem; }
+.request-filter { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; margin-top: 1rem; }
+.request-filter select { padding: .52rem; border: 1px solid #a9b2ae; border-radius: .4rem; background: #fff; color: inherit; font: inherit; }
+.request-description { margin-top: .55rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.delete-link { display: inline-block; margin-top: .6rem; color: #9b2625; }
+.confirm-description { margin-bottom: 1rem; overflow-wrap: anywhere; }
 
 .account-panel { max-width: 34rem; margin: 2rem auto 3rem; padding: clamp(1rem, 5vw, 2rem); background: #fff; border: 1px solid var(--line); border-radius: 1rem; }
 .account-panel h1 { font-size: 2.25rem; margin-bottom: 1.25rem; }
 .field { margin-bottom: 1rem; }
 .field label { display: block; margin-bottom: .3rem; font-weight: 600; }
-.field input:not([type="checkbox"]) { width: 100%; padding: .58rem .7rem; color: inherit; border: 1px solid #a9b2ae; border-radius: .4rem; font: inherit; }
+.field :is(input:not([type="checkbox"]), select, textarea) { width: 100%; padding: .58rem .7rem; color: inherit; border: 1px solid #a9b2ae; border-radius: .4rem; background: #fff; font: inherit; }
 .field input[type="checkbox"] { width: 1rem; height: 1rem; margin: .2rem .45rem 0 0; accent-color: var(--accent); }
 .checkbox label { display: flex; align-items: flex-start; }
 .help { margin-top: .35rem; color: var(--muted); font-size: .85rem; }
 .help ul, .errorlist { margin: .2rem 0 0; padding-left: 1.2rem; }
 .errorlist { color: #9b2625; font-size: .9rem; }
 form > .errorlist { margin-bottom: 1rem; }
-.invalid input:not([type="checkbox"]) { border-color: #9b2625; }
+.invalid :is(input:not([type="checkbox"]), select, textarea) { border-color: #9b2625; }
 .invalid.checkbox { border-left: 2px solid #9b2625; padding-left: .5rem; }
 .account-link { margin-top: 1rem; }
 .notice { margin-top: 1rem; padding: .75rem 1rem; background: #e0ece8; border-radius: .5rem; }
+.notice.error { background: #fae7e5; color: #7f1c1c; }
 
 @media (max-width: 36rem) {
   .hero { grid-template-columns: 1fr; gap: 1.25rem; }
