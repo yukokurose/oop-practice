@@ -1,0 +1,17 @@
+{% extends "studio/base.html" %}
+
+{% block title %}Личный кабинет · Design.pro{% endblock %}
+{% block content %}
+<section class="projects">
+  <h1>Личный кабинет</h1>
+  <p>{{ user.full_name|default:user.username }}</p>
+  <h2>Мои заявки</h2>
+  <ul class="request-list">
+    {% for item in requests %}
+      <li><strong>{{ item.title }}</strong> <span>{{ item.get_status_display }}</span></li>
+    {% empty %}
+      <li class="empty">У вас пока нет заявок.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

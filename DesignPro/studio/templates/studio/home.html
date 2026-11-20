@@ -1,0 +1,40 @@
+{% extends "studio/base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Дизайн интерьеров</h1>
+    <p>Готовые проекты студии Design.pro и заявки на разработку интерьера.</p>
+    {% if user.is_authenticated %}
+      <a class="button" href="{% url 'dashboard' %}">Личный кабинет</a>
+    {% else %}
+      <a class="button" href="{% url 'register' %}">Зарегистрироваться</a>
+    {% endif %}
+  </div>
+  <div class="hero-count">
+    <strong>{{ accepted_count }}</strong>
+    <span>Заявок принято в работу</span>
+  </div>
+</section>
+<section class="projects">
+  <h2>Готовые проекты</h2>
+  <div class="project-grid">
+    {% for item in completed %}
+      <article class="project">
+        {% if item.design %}
+          <img src="{{ item.design.url }}" alt="{{ item.title }}" loading="lazy">
+        {% elif item.photo %}
+          <img src="{{ item.photo.url }}" alt="{{ item.title }}" loading="lazy">
+        {% endif %}
+        <div class="project-content">
+          <p>{{ item.category }}</p>
+          <h3>{{ item.title }}</h3>
+          <time datetime="{{ item.created_at|date:'c' }}">{{ item.created_at|date:"d.m.Y H:i" }}</time>
+        </div>
+      </article>
+    {% empty %}
+      <p class="empty">Готовых проектов пока нет.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

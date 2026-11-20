@@ -1,0 +1,15 @@
+{% extends "studio/base.html" %}
+
+{% block title %}Вход · Design.pro{% endblock %}
+{% block content %}
+<section class="account-panel">
+  <h1>Вход</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% include "studio/form_fields.html" %}
+    <button type="submit" class="button">Войти</button>
+  </form>
+  <p class="account-link">Впервые здесь? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+</section>
+{% endblock %}
