@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ author }} · LocalLibrary{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'authors' %}">← Авторы</a>
+<h1>{{ author }}</h1>
+{% if author.date_of_birth or author.date_of_death %}
+  <p>{{ author.date_of_birth|date:"Y"|default:"?" }}–{{ author.date_of_death|date:"Y" }}</p>
+{% endif %}
+<div class="actions">
+  {% if perms.catalog.change_author %}<a href="{% url 'author_update' author.pk %}">Редактировать</a>{% endif %}
+  {% if perms.catalog.delete_author %}<a class="danger" href="{% url 'author_delete' author.pk %}">Удалить автора</a>{% endif %}
+</div>
+<h2>Книги в каталоге</h2>
+<ul class="catalog-list">
+  {% for book in author.book_set.all %}<li><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></li>
+  {% empty %}<li>Книги пока не добавлены.</li>{% endfor %}
+</ul>
+{% endblock %}

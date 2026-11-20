@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Вход · LocalLibrary{% endblock %}
+{% block content %}
+<h1>Вход в библиотеку</h1>
+<form class="edit-form" method="post">
+  {% csrf_token %}{{ form.as_p }}<input type="hidden" name="next" value="{{ next }}">
+  <button class="button">Войти</button>
+</form>
+<p><a href="{% url 'password_reset' %}">Забыли пароль?</a></p>
+{% endblock %}

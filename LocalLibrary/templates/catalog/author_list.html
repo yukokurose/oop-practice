@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Авторы · LocalLibrary{% endblock %}
+{% block content %}
+<div class="page-heading"><h1>Авторы</h1>{% if perms.catalog.add_author %}<a class="button" href="{% url 'author_create' %}">Добавить автора</a>{% endif %}</div>
+<ul class="catalog-list">
+  {% for author in author_list %}
+    <li><a href="{{ author.get_absolute_url }}">{{ author }}</a></li>
+  {% empty %}<li>Авторы пока не добавлены.</li>{% endfor %}
+</ul>
+{% endblock %}

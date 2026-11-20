@@ -1,0 +1,39 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LocalLibrary{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'catalog/site.css' %}">
+</head>
+<body>
+<a class="skip" href="#main">К содержанию</a>
+<header class="top"><div class="wrap top-inner">
+  <a class="brand" href="{% url 'index' %}">LocalLibrary</a>
+  <nav aria-label="Главное меню">
+    <a href="{% url 'books' %}">Книги</a>
+    <a href="{% url 'authors' %}">Авторы</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'my-borrowed' %}">Мои выдачи</a>
+      {% if perms.catalog.can_mark_returned %}<a href="{% url 'all-borrowed' %}">Все выдачи</a>{% endif %}
+      {% if user.is_staff %}<a href="{% url 'admin:index' %}">Администрирование</a>{% endif %}
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="quiet">Выйти</button></form>
+    {% else %}
+      <a class="button small" href="{% url 'login' %}">Войти</a>
+    {% endif %}
+  </nav>
+</div></header>
+<main id="main" class="wrap">
+  {% block content %}{% endblock %}
+  {% if is_paginated %}
+    <nav class="pagination" aria-label="Страницы списка">
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">← Назад</a>{% endif %}
+      <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Далее →</a>{% endif %}
+    </nav>
+  {% endif %}
+</main>
+<footer><div class="wrap">LocalLibrary · Учебный проект на Django</div></footer>
+</body>
+</html>

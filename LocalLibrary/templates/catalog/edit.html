@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} · LocalLibrary{% endblock %}
+{% block content %}
+<h1>{{ page_title }}</h1>
+<form class="edit-form" method="post">{% csrf_token %}{{ form.as_p }}<button class="button">Сохранить</button></form>
+{% endblock %}

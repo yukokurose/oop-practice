@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} · LocalLibrary{% endblock %}
+{% block content %}
+<h1>{{ page_title }}</h1>
+<p>Удалить «{{ object }}»?</p>
+<form class="actions" method="post">{% csrf_token %}
+  <button class="button danger-button">Удалить</button><a href="{{ object.get_absolute_url }}">Отмена</a>
+</form>
+{% endblock %}

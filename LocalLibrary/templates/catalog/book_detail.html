@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} · LocalLibrary{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'books' %}">← Книги</a>
+<h1>{{ book.title }}</h1>
+{% if book.author %}<p><a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>{% endif %}
+<p class="lead">{{ book.summary }}</p>
+<dl class="metadata">
+  <div><dt>ISBN</dt><dd>{{ book.isbn }}</dd></div>
+  <div><dt>Язык</dt><dd>{{ book.language|default:"Не указан" }}</dd></div>
+  <div><dt>Жанры</dt><dd>{{ book.genre.all|join:", "|default:"Не указаны" }}</dd></div>
+</dl>
+<div class="actions">
+  {% if perms.catalog.change_book %}<a href="{% url 'book_update' book.pk %}">Редактировать</a>{% endif %}
+  {% if perms.catalog.delete_book %}<a class="danger" href="{% url 'book_delete' book.pk %}">Удалить книгу</a>{% endif %}
+</div>
+<h2>Экземпляры</h2>
+<ul class="catalog-list">
+  {% for copy in book.copies.all %}
+    <li><span>{{ copy.imprint }}</span><span>{{ copy.get_status_display }}{% if copy.due_back and copy.status == "o" %} · до {{ copy.due_back }}{% endif %}</span></li>
+  {% empty %}<li>Экземпляров пока нет.</li>{% endfor %}
+</ul>
+{% endblock %}

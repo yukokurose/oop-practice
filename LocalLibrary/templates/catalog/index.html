@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Местная<br>библиотека</h1>
+  <p>Найдите книгу в каталоге, проверьте наличие экземпляров или посмотрите срок возврата своих книг.</p>
+  <a class="button light" href="{% url 'books' %}">Открыть каталог <span aria-hidden="true">→</span></a>
+</section>
+<section class="collection" aria-labelledby="collection-title">
+  <h2 id="collection-title">Библиотечный фонд</h2>
+  <dl class="stats">
+    <div><dt>Книги</dt><dd>{{ num_books }}</dd></div>
+    <div><dt>Экземпляры</dt><dd>{{ num_instances }}</dd></div>
+    <div><dt>Доступно</dt><dd>{{ num_available }}</dd></div>
+    <div><dt>Авторы</dt><dd>{{ num_authors }}</dd></div>
+    <div><dt>Жанры</dt><dd>{{ num_genres }}</dd></div>
+  </dl>
+  <p class="muted">Посещений главной в этом браузере — {{ num_visits }}.</p>
+</section>
+{% endblock %}

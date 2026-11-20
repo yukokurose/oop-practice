@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Продление выдачи · LocalLibrary{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'all-borrowed' %}">← Все выдачи</a>
+<h1>Продление выдачи</h1>
+<p>{{ copy.book }} · {{ copy.borrower|default:"Читатель не указан" }}</p>
+<p class="muted">Текущий срок возврата — {{ copy.due_back|default:"не указан" }}.</p>
+<form class="edit-form" method="post">{% csrf_token %}{{ form.as_p }}<button class="button">Сохранить срок</button></form>
+{% endblock %}

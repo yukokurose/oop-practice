@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Книги · LocalLibrary{% endblock %}
+{% block content %}
+<div class="page-heading"><h1>Книги</h1>{% if perms.catalog.add_book %}<a class="button" href="{% url 'book_create' %}">Добавить книгу</a>{% endif %}</div>
+<ul class="catalog-list">
+  {% for book in book_list %}
+    <li><a href="{{ book.get_absolute_url }}">{{ book.title }}</a><span>{{ book.author|default:"Автор не указан" }}</span></li>
+  {% empty %}<li>В каталоге пока нет книг.</li>{% endfor %}
+</ul>
+{% endblock %}

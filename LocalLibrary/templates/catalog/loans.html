@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} · LocalLibrary{% endblock %}
+{% block content %}
+<h1>{{ page_title }}</h1>
+{% if user.is_authenticated and page_title == "Мои выдачи" %}<p class="muted">Читатель — {{ user.get_username }}</p>{% endif %}
+<ul class="catalog-list">
+  {% for copy in loans %}
+    <li>
+      <a href="{{ copy.book.get_absolute_url }}">{{ copy.book.title }}</a>
+      {% if page_title == "Все выдачи" %}<span>{{ copy.borrower|default:"Читатель не указан" }}</span>{% endif %}
+      <span{% if copy.is_overdue %} class="danger"{% endif %}>{% if copy.due_back %}До {{ copy.due_back }}{% else %}Срок не указан{% endif %}{% if copy.is_overdue %} · Просрочено{% endif %}</span>
+      {% if perms.catalog.can_mark_returned %}<a href="{% url 'renew-book-librarian' copy.pk %}">Продлить</a>{% endif %}
+    </li>
+  {% empty %}<li>Активных выдач нет.</li>{% endfor %}
+</ul>
+{% endblock %}
