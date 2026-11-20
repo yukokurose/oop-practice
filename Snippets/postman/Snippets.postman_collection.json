@@ -1,0 +1,840 @@
+{
+  "info": {
+    "name": "Snippets API — Postman",
+    "description": "Проверка чтения, CRUD и прав доступа. Запускайте запросы по порядку через Collection Runner. Для Basic Auth нужны две разные учебные учётные записи.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8090",
+      "type": "string"
+    },
+    {
+      "key": "ownerUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ownerPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "otherUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "otherPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "snippetId",
+      "value": "__not_created__",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Корень API",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Корень содержит ссылки на сниппеты и пользователей\", function () {",
+              "    const data = pm.response.json();",
+              "    pm.expect(data.snippets).to.match(/\\/snippets\\/$/);",
+              "    pm.expect(data.users).to.match(/\\/users\\/$/);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Список сниппетов для гостя",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            ""
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Список представлен массивом JSON\", function () {",
+              "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Гость не может создать сниппет",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"print(1)\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 403\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Проверка обязательных и допустимых полей",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{ownerUsername}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{ownerPassword}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"language\": \"invalid-language\",\n  \"style\": \"invalid-style\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Ответ содержит ошибки полей\", function () {",
+              "    const data = pm.response.json();",
+              "    pm.expect(data).to.have.keys(\"code\", \"language\", \"style\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Создать сниппет",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{ownerUsername}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{ownerPassword}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Postman — учебный сниппет\",\n  \"code\": \"print('hello')\",\n  \"linenos\": true,\n  \"language\": \"python\",\n  \"style\": \"friendly\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set(\"snippetId\", \"__not_created__\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"API вернул ID и назначил владельца\", function () {",
+              "    const data = pm.response.json();",
+              "    pm.expect(data.id).to.be.a(\"number\");",
+              "    pm.collectionVariables.set(\"snippetId\", String(data.id));",
+              "    pm.expect(data.owner).to.eql(pm.variables.get(\"ownerUsername\"));",
+              "    pm.expect(data.highlight).to.be.a(\"string\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Прочитать созданный сниппет",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/{{snippetId}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            "{{snippetId}}",
+            ""
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Возвращается созданный сниппет\", function () {",
+              "    const data = pm.response.json();",
+              "    pm.expect(String(data.id)).to.eql(pm.collectionVariables.get(\"snippetId\"));",
+              "    pm.expect(data.code).to.eql(\"print('hello')\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Список пользователей со ссылками",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/users/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            ""
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Профиль владельца содержит ссылку на сниппет\", function () {",
+              "    const users = pm.response.json();",
+              "    const owner = users.find(user => user.username === pm.variables.get(\"ownerUsername\"));",
+              "    pm.expect(owner).to.be.an(\"object\");",
+              "    const id = pm.collectionVariables.get(\"snippetId\");",
+              "    pm.expect(owner.snippets.some(url => url.endsWith(\"/snippets/\" + id + \"/\"))).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "HTML-подсветка",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/html"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/{{snippetId}}/highlight/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            "{{snippetId}}",
+            "highlight",
+            ""
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Ответ содержит HTML с подсветкой и номерами строк\", function () {",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+              "    pm.expect(pm.response.text()).to.include(\"linenodiv\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Другой пользователь не может изменить сниппет",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{otherUsername}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{otherPassword}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/{{snippetId}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            "{{snippetId}}",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Чужое изменение\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 403\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Другой пользователь не может удалить сниппет",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{otherUsername}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{otherPassword}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/{{snippetId}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            "{{snippetId}}",
+            ""
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 403\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Владелец заменяет сниппет",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{ownerUsername}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{ownerPassword}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/{{snippetId}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            "{{snippetId}}",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Postman — обновлённый сниппет\",\n  \"code\": \"print(42)\",\n  \"linenos\": true,\n  \"language\": \"python\",\n  \"style\": \"friendly\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"API вернул обновлённый код\", function () {",
+              "    pm.expect(pm.response.json().code).to.eql(\"print(42)\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Владелец меняет заголовок",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{ownerUsername}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{ownerPassword}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/{{snippetId}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            "{{snippetId}}",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Postman — финальный заголовок\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"PATCH меняет заголовок и сохраняет код\", function () {",
+              "    const data = pm.response.json();",
+              "    pm.expect(data.title).to.eql(\"Postman — финальный заголовок\");",
+              "    pm.expect(data.code).to.eql(\"print(42)\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Владелец удаляет сниппет",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{ownerUsername}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{ownerPassword}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/{{snippetId}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            "{{snippetId}}",
+            ""
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Удалённый сниппет недоступен",
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/snippets/{{snippetId}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "snippets",
+            "{{snippetId}}",
+            ""
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "if (pm.response.code === 404) {",
+              "    pm.collectionVariables.set(\"snippetId\", \"__not_created__\");",
+              "}"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
