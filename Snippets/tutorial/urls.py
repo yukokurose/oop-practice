@@ -1,0 +1,15 @@
+from django.contrib import admin
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+
+from snippets.views import SnippetViewSet, UserViewSet
+
+router = DefaultRouter()
+router.register("snippets", SnippetViewSet)
+router.register("users", UserViewSet)
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("api-auth/", include("rest_framework.urls")),
+    path("", include(router.urls)),
+]
